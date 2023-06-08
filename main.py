@@ -15,6 +15,27 @@ app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+app.config['SECRET_KEY'] = 'any-secret-key-you-choose'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db=SQLAlchemy(app)
+
+with app.app_context():
+    class User(UserMixin, db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        phone = db.Column(db.String(100), unique=True)
+        password = db.Column(db.String(100))
+        name = db.Column(db.String(1000))
+
+    db.session.commit()
+    db.create_all()
+class MyModelView(ModelView):
+    def is_accessible(self):
+
+            return True
+admin = Admin(app)
+admin.add_view(MyModelView(User, db.session))
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -24,10 +45,6 @@ def load_user(user_id):
     return True
 
 
-app.config['SECRET_KEY'] = 'any-secret-key-you-choose'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
 
 @app.route("/")
@@ -53,6 +70,14 @@ def register():
         user_phone=request.form.get("user_phone")
         user_password=request.form.get("user_password")
         print(user_name,user_password,user_phone)
+        new=User(
+            user_name=user_name,
+            user_password=user_password,
+            user_phone=user_phone,
+        )
+
+        db.session.add(new)
+        db.session.commit()
 
 
     return render_template("register.html")
