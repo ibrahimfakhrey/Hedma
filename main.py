@@ -35,11 +35,26 @@ def start():
     return render_template("index.html")
 
 
-@app.route("/login")
+@app.route("/login",methods=["GET","POST"])
 def login():
+    if request.method == "POST":
+        user_phone = request.form.get("user_phone")
+        user_password = request.form.get("user_password")
+        if user_phone=="1234" and  user_password=="ahmed" :
+            return "done"
+        else:
+            return redirect("/register")
+
     return render_template("login.html")
-@app.route("register")
+@app.route("/register",methods=["GET","POST"])
 def register():
+    if request.method=="POST":
+        user_name=request.form.get("user_name")
+        user_phone=request.form.get("user_phone")
+        user_password=request.form.get("user_password")
+        print(user_name,user_password,user_phone)
+
+
     return render_template("register.html")
 
 

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HEDMA</title>
+      <link rel="stylesheet" href="../static/fstyle.css">
+
+</head>
+<body>
+<div class="login-box">
+  <h2>Login</h2>
+  <form action="{{ url_for('register') }}" method="post" id="myForm">
+    <div class="user-box">
+      <input type="text" name="user_name"required>
+      <label>Username</label>
+    </div>
+     <div class="user-box">
+      <input type="text" name="user_phone"required>
+      <label>Phone Number</label>
+    </div>
+    <div class="user-box">
+      <input type="password" name="user_password"required>
+      <label>Password</label>
+    </div>
+
+    <a href="#"onclick="if (validateForm()){document.getElementById('myForm').submit();}">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      Submit
+    </a>
+
+  </form>
+</div>
+<script>
+function validateForm() {
+  var userName = document.forms["myForm"]["user_name"].value;
+  var userPhone = document.forms["myForm"]["user_phone"].value;
+  var userPassword = document.forms["myForm"]["user_password"].value;
+
+  if (userName == "") {
+    alert("Username must be filled out");
+    return false;
+  }
+
+  if (userPhone == "") {
+    alert("Phone number must be filled out");
+    return false;
+  }
+
+  if (userPassword == "") {
+    alert("Password must be filled out");
+    return false;
+  }
+
+  return true;
+}
+</script>
+</body>
+</html>
