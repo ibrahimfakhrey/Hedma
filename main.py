@@ -56,8 +56,9 @@ def start():
 def login():
     if request.method == "POST":
         user_phone = request.form.get("user_phone")
+        user=User.query.filter_by(phone=user_phone).first()
         user_password = request.form.get("user_password")
-        if user_phone=="1234" and  user_password=="ahmed" :
+        if user_phone==user.phone and   check_password_hash(user.password, user_password) :
             return "done"
         else:
             return redirect("/register")
@@ -68,12 +69,15 @@ def register():
     if request.method=="POST":
         user_name=request.form.get("user_name")
         user_phone=request.form.get("user_phone")
-        user_password=request.form.get("user_password")
-        print(user_name,user_password,user_phone)
+        hash_and_salted_password = generate_password_hash(
+            request.form.get('user_password'),
+            method='pbkdf2:sha256',
+            salt_length=8
+        )
         new=User(
-            user_name=user_name,
-            user_password=user_password,
-            user_phone=user_phone,
+            name=user_name,
+            password=hash_and_salted_password,
+            phone=user_phone,
         )
 
         db.session.add(new)
