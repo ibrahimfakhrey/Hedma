@@ -19,22 +19,39 @@ app.config['SECRET_KEY'] = 'any-secret-key-you-choose'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db=SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 with app.app_context():
     class User(UserMixin, db.Model):
         id = db.Column(db.Integer, primary_key=True)
         phone = db.Column(db.String(100), unique=True)
         password = db.Column(db.String(100))
         name = db.Column(db.String(1000))
+        is_admin = db.Column(db.Boolean)
 
     db.session.commit()
     db.create_all()
+
+    class clothes(UserMixin, db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String(1000))
+        link = db.Column(db.String(100))
+        description = db.Column(db.String(100))
+
+    db.session.commit()
+    db.create_all()
+
+
 class MyModelView(ModelView):
     def is_accessible(self):
-
-            return True
+        return True
 admin = Admin(app)
 admin.add_view(MyModelView(User, db.session))
+admin.add_view(MyModelView(clothes, db.session))
 
 
 @login_manager.user_loader
@@ -52,17 +69,17 @@ def start():
     return render_template("index.html")
 
 
-@app.route("/login",methods=["GET","POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         user_phone = request.form.get("user_phone")
-        user=User.query.filter_by(phone=user_phone).first()
+        user = User.query.filter_by(phone=user_phone).first()
         user_password = request.form.get("user_password")
-        if user_phone==user.phone and   check_password_hash(user.password, user_password) :
-            return "done"
+        if user and check_password_hash(user.password, user_password):
+            login_user(user)
+            return render_template("fashion.html")
         else:
             return redirect("/register")
-
     return render_template("login.html")
 @app.route("/register",methods=["GET","POST"])
 def register():
