@@ -42,6 +42,24 @@ with app.app_context():
         link = db.Column(db.String(100))
         description = db.Column(db.String(100))
 
+    class Pants(UserMixin, db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String(1000))
+        link = db.Column(db.String(100))
+        description = db.Column(db.String(100))
+        rating=db.Column(db.Integer)
+        colors=db.Column(db.String(100))
+        price = db.Column(db.Integer)
+
+    class Shirt(UserMixin, db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String(1000))
+        link = db.Column(db.String(100))
+        description = db.Column(db.String(100))
+        rating=db.Column(db.Integer)
+        colors=db.Column(db.String(100))
+        price = db.Column(db.Integer)
+
     db.session.commit()
     db.create_all()
 
@@ -52,6 +70,8 @@ class MyModelView(ModelView):
 admin = Admin(app)
 admin.add_view(MyModelView(User, db.session))
 admin.add_view(MyModelView(clothes, db.session))
+admin.add_view(MyModelView(Pants, db.session))
+admin.add_view(MyModelView(Shirt, db.session))
 
 
 @login_manager.user_loader
@@ -77,7 +97,9 @@ def login():
         user_password = request.form.get("user_password")
         if user and check_password_hash(user.password, user_password):
             login_user(user)
-            return render_template("fashion.html")
+            items=Pants.query.all()
+            shirt = Shirt.query.all()
+            return render_template("fashion.html",items=items,shirts=shirt,user_name=user.name)
         else:
             return redirect("/register")
     return render_template("login.html")
@@ -99,11 +121,12 @@ def register():
 
         db.session.add(new)
         db.session.commit()
-
-
+        return redirect("/login")
     return render_template("register.html")
 
-
+# @app.route("/cart",methods=["GET","POST"])
+# def cart():
+#     # if request.method == "POST":
 
 
 
