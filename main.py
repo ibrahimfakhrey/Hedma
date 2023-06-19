@@ -3,7 +3,7 @@ import time
 import datetime
 from importlib.metadata import metadata
 
-from flask import Flask, render_template, redirect, url_for, flash, abort, request, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, abort, request, jsonify, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
@@ -82,7 +82,7 @@ def load_user(user_id):
     return True
 
 
-
+items=[ {'name': 'Item 1', 'price': 10, 'link': 'item1.jpg'}]
 
 @app.route("/")
 def start():
@@ -124,12 +124,24 @@ def register():
         return redirect("/login")
     return render_template("register.html")
 
-# @app.route("/cart",methods=["GET","POST"])
-# def cart():
-#     # if request.method == "POST":
+@app.route('/add_to_cart')
+def add_to_cart():
+    item_name = request.args.get('item')
+    user_item=Pants.query.filter_by(name=item_name).first()
+    item_price=user_item.price
+    print(item_price)
+    # if 'cart' not in session:
+    #     session['cart'] = []
+    # session['cart'].append(items[item_id])
+    return redirect(url_for('show_cart'))
 
+@app.route('/cart')
+def show_cart():
+    cart = session.get('cart')
+    total_price = sum(item['price'] for item in cart)
+    print(cart)
 
-
+    return render_template('cart.html', cart=cart, total_price=total_price)
 
 
 
