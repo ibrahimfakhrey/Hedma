@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>jQuery Animation Example</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <style>
+    #box {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <div id="box"></div>
+  <div id="marina">hi</div>
+
+  <script>
+    $(document).ready(function() {
+$("#marina").click(function() {
+    $(this).append("<h1>Hey this is Marina, use jQuery</h1>");
+  });
+      $("#box").click(function() {
+        $(this).animate({
+          left: '250px',
+          opacity: '0.5',
+          height: '150px',
+          width: '150px'
+        });
+      });
+    });
+  </script>
+</body>
+</html>

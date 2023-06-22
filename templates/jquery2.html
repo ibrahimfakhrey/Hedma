@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+    <title>AJAX with Flask</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>AJAX with Flask</h1>
+    <button id="ajax-button">Send AJAX Request</button>
+    <div id="response"></div>
+    <a href="/test2"> without jquery </a>
+    <h1>{{m}}</h1>
+    <script>
+        $(document).ready(function() {
+            $('#ajax-button').click(function() {
+                $.ajax({
+                    type: 'POST',
+                    url: '/ajax',
+                    data: JSON.stringify({'key': 'value'}),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function(response) {
+                        $('#response').html(response.message);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

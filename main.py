@@ -1,3 +1,4 @@
+import json
 import random
 import time
 import datetime
@@ -144,11 +145,23 @@ def show_cart():
     return render_template('cart.html', cart=cart, total_price=total_price)
 
 
+@app.route('/ajax', methods=['POST'])
+def ajax():
+    if request.method == 'POST':
+        data = json.loads(request.data)
+        print(data)
+        response = {'message': 'added to the cart', 'data': data}
+        return jsonify(response)
+@app.route("/test")
+def test():
+
+    return render_template("jquery2.html")
 
 
-
-
-
+@app.route("/test2")
+def test2():
+    message = "added to the cart"
+    return render_template("jquery2.html",m=message)
 
 
 
