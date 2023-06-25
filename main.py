@@ -125,43 +125,59 @@ def register():
         return redirect("/login")
     return render_template("register.html")
 
-@app.route('/add_to_cart')
+
+cart = {}
+
+
+@app.route('/add_to_cart', methods=['POST'])
 def add_to_cart():
-    item_name = request.args.get('item')
-    user_item=Pants.query.filter_by(name=item_name).first()
-    item_price=user_item.price
-    print(item_price)
-    # if 'cart' not in session:
-    #     session['cart'] = []
-    # session['cart'].append(items[item_id])
-    return redirect(url_for('show_cart'))
+    itemName = request.json['name']
+    itemPrice = request.json['price']
 
-@app.route('/cart')
+    if itemName in cart:
+        cart[itemName]['quantity'] += 1
+    else:
+        cart[itemName] = {
+            'price': itemPrice,
+            'quantity': 1
+        }
+
+    return jsonify({'success': True})
+
+
+@app.route('/show_cart')
 def show_cart():
-    cart = session.get('cart')
-    total_price = sum(item['price'] for item in cart)
-    print(cart)
+    items = []
 
-    return render_template('cart.html', cart=cart, total_price=total_price)
+    for name, data in cart.items():
+        items.append({
+            'name': name,
+            'price': data['price'],
+            'quantity': data['quantity']
+        })
 
-
-@app.route('/ajax', methods=['POST'])
-def ajax():
-    if request.method == 'POST':
-        data = json.loads(request.data)
-        print(data)
-        response = {'message': 'added to the cart', 'data': data}
-        return jsonify(response)
-@app.route("/test")
-def test():
-
-    return render_template("jquery2.html")
+    return jsonify(items)
 
 
-@app.route("/test2")
-def test2():
-    message = "added to the cart"
-    return render_template("jquery2.html",m=message)
+
+
+# @app.route('/ajax', methods=['POST'])
+# def ajax():
+#     if request.method == 'POST':
+#         data = json.loads(request.data)
+#         print(data)
+#         response = {'message': 'added to the cart', 'data': data}
+#         return jsonify(response)
+# @app.route("/test")
+# def test():
+#
+#     return render_template("jquery2.html")
+#
+#
+# @app.route("/test2")
+# def test2():
+#     message = "added to the cart"
+#     return render_template("jquery2.html",m=message)
 
 
 

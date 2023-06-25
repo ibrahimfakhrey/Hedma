@@ -329,6 +329,23 @@
          function closeNav() {
            document.getElementById("mySidenav").style.width = "0";
          }
+         $("a").click(function(event){
+    event.preventDefault(); // prevent the browser from following the link
+    var itemName = $("h4.shirt_text").text();
+    var itemPrice = $("p.price_text span").text();
+    $.ajax({
+        type: "POST",
+        url: "{{ url_for('add_to_cart') }}",
+        contentType: "application/json",
+        data: JSON.stringify({ name: itemName, price: itemPrice }),
+        success: function(response) {
+            alter("added")
+        },
+        error: function(error) {
+            // handle error response from server
+        }
+    });
+});
       </script>
    </body>
 </html>
